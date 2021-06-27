@@ -19,7 +19,7 @@ contract Ticket is ERC20{
     address private _manager;
 
     constructor() ERC20("LotteryTicket", "LT") {
-    _manager = msg.sender;
+        _manager = msg.sender;
     }
 
     function printTickets(address recepient, uint ticketsAmount) public {
@@ -35,9 +35,9 @@ contract Ticket is ERC20{
     }
 
     function _transfer(address sender, address recipient, uint256 amount) internal virtual override {
-    require((((sender != address(0)) && (recipient == _manager)) || ((sender == _manager) && (recipient != address(0)))), 
-        "Ticket: tickets are only transfered between manager and players");
-    ERC20._transfer(sender, recipient, amount);
+        require((((sender != address(0)) && (recipient == _manager)) || ((sender == _manager) && (recipient != address(0)))), 
+            "Ticket: tickets are only transfered between manager and players");
+        ERC20._transfer(sender, recipient, amount);
     }
 }
 
@@ -56,7 +56,7 @@ contract Lottery {
     address[] public lotteryBag;
 
     // Variables for lottery information
-    Ticket tickets;
+    Ticket public tickets;
     address[] public winners;
     bool public isLotteryLive;
     uint public BNBToParticipate;
@@ -112,8 +112,21 @@ contract Lottery {
         isLotteryLive = true;
         BNBToParticipate = BNBRequired == 0 ? 1 : BNBRequired;
         BUSDToParticipate = BUSDRequired == 0 ? 1 : BUSDRequired;
+        winners = new address[](0);
     }
 
+    function getPlayersList() public view returns (address [] memory) {
+        return addressIndexes;
+    }
+
+    function getOwner() public view returns (address) {
+        return owner;
+    }
+
+    function isLive() public view returns (bool) {
+        return isLotteryLive;
+    }
+    
     function declareWinner() public restricted {
         require(lotteryBag.length > 0);
 
@@ -121,7 +134,10 @@ contract Lottery {
         uint winnersAmount = generateRandomNumber() % lotteryBag.length;
         for(uint i = 0; i < winnersAmount; i++) {
             uint index = generateRandomNumber() % lotteryBag.length;
-            winners.push(lotteryBag[index]);
+            if(lotteryBag[index] != address(0)) {
+                winners.push(lotteryBag[index]);
+                lotteryBag[index] = address(0);
+            } else i--;
         }
 
         // empty the lottery bag and indexAddresses
