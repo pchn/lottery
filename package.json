@@ -9,12 +9,12 @@
     "build": "yarn compile && yarn typechain",
     "test": "hardhat test ./test/lottery-test.ts",
     "clean": "hardhat clean && rm -rf typechain coverage cache",
-    "prettier": "prettier --write 'contracts/**/*.sol'",
-    "prettier:check": "prettier --check 'contracts/**/*.sol'",
+    "prettier": "prettier --write 'contracts/*.sol'",
+    "prettier:check": "prettier --check 'contracts/*.sol'",
     "lint": "npx eslint --ext .js,.ts,.json --fix ./",
     "lint:check": "npx eslint --ext .js,.ts,.json ./",
     "format": "yarn prettier && yarn lint",
-    "deploy": "npx hardhat run --network bsctestnet deploy/deploy.ts",
+    "deploy": "npx hardhat run --network bsctestnet deploy/deploy.js",
     "coverage": "npx hardhat coverage"
   },
   "devDependencies": {
