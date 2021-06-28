@@ -159,7 +159,6 @@ contract Lottery {
             totalTicketsWon += players[winners[i]].entryCount;
             if(winners[i] == player) {
                 isWinner = true;
-                winners[i] = address(0);
             }
         }
         if(isWinner) {
