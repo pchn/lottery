@@ -16,26 +16,7 @@ const config: HardhatUserConfig = {
         },
       }
     ]
-
-
-  },
-  /*networks: {
-    bsctestnet: {
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-      accounts: [privateKey],
-      chainId: 97,
-      gasPrice: 20000000000,
-    },
-    bscmainnet: {
-      url: "https://bsc-dataseed.binance.org/",
-      accounts: [privateKey],
-      chainId: 56,
-      gasPrice: 5000000000,
-    },
-  },
-  etherscan: {
-    apiKey: marsKey,
-  },*/
+  }
 }
 
 export default config
