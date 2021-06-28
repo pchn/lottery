@@ -93,7 +93,7 @@ contract Lottery {
     function buyWithBUSD(uint ticketsAmount) public {
         require(isLotteryLive);
         require(Token(BUSDAddr).allowance(msg.sender, address(this)) >= ticketsAmount * BUSDToParticipate);
-        Token(BUSDAddr).transferFrom(msg.sender, address(this), ticketsAmount);
+        Token(BUSDAddr).transferFrom(msg.sender, address(this), ticketsAmount * BUSDToParticipate);
         if (isNewPlayer(msg.sender)) {
             players[msg.sender].entryCount = ticketsAmount;
             addressIndexes.push(msg.sender);
