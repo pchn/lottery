@@ -3,7 +3,6 @@ import "@nomiclabs/hardhat-etherscan"
 import "@nomiclabs/hardhat-ethers"
 import "@nomiclabs/hardhat-waffle"
 import "@openzeppelin/hardhat-upgrades"
-import "web3"
 
 import "solidity-coverage"
 

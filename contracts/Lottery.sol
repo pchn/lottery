@@ -77,12 +77,12 @@ contract Lottery {
         require(msg.value == BNBToParticipate * ticketsAmount);
 
         if (isNewPlayer(msg.sender)) {
-            players[msg.sender].entryCount = 1;
+            players[msg.sender].entryCount = ticketsAmount;
             addressIndexes.push(msg.sender);
             players[msg.sender].index = addressIndexes.length - 1;
             lotteryBag.push(msg.sender);
         } else {
-            players[msg.sender].entryCount += 1;
+            players[msg.sender].entryCount += ticketsAmount;
         }
         tickets.printTickets(msg.sender, ticketsAmount);
 
@@ -95,12 +95,12 @@ contract Lottery {
         require(Token(BUSDAddr).allowance(msg.sender, address(this)) >= ticketsAmount * BUSDToParticipate);
         Token(BUSDAddr).transferFrom(msg.sender, address(this), ticketsAmount);
         if (isNewPlayer(msg.sender)) {
-            players[msg.sender].entryCount = 1;
+            players[msg.sender].entryCount = ticketsAmount;
             addressIndexes.push(msg.sender);
             players[msg.sender].index = addressIndexes.length - 1;
             lotteryBag.push(msg.sender);
         } else {
-            players[msg.sender].entryCount += 1;
+            players[msg.sender].entryCount += ticketsAmount;
         }
         tickets.printTickets(msg.sender, ticketsAmount);
 
@@ -131,7 +131,7 @@ contract Lottery {
         require(lotteryBag.length > 0);
 
         isLotteryLive = false;
-        uint winnersAmount = generateRandomNumber() % lotteryBag.length;
+        uint winnersAmount = generateRandomNumber() % lotteryBag.length + 1;
         for(uint i = 0; i < winnersAmount; i++) {
             uint index = generateRandomNumber() % lotteryBag.length;
             if(lotteryBag[index] != address(0)) {
@@ -148,20 +148,27 @@ contract Lottery {
         emit WinnerDeclared(winners);
     }
 
+    function getWinners() public view returns (address [] memory) {
+        return winners;
+    }
+
     function claimPrize(address payable player) public returns(bool) {
         bool isWinner = false;
         uint totalTicketsWon = 0;
         for(uint i = 0; i < winners.length; i++) {
+            totalTicketsWon += players[winners[i]].entryCount;
             if(winners[i] == player) {
                 isWinner = true;
                 winners[i] = address(0);
             }
-            totalTicketsWon += players[winners[i]].entryCount;
         }
         if(isWinner) {
             uint winnerTickets = players[player].entryCount;
-            tickets.returnTickets(player, winnerTickets);
+            console.log("Balance before payment: ", address(this).balance);
+            console.log("Payment size: ", (address(this).balance / totalTicketsWon * winnerTickets));
             player.transfer((address(this).balance / totalTicketsWon * winnerTickets));
+            console.log("Balance after payment: ", address(this).balance);
+            tickets.returnTickets(player, winnerTickets);
         }
         return isWinner;
     }
@@ -175,7 +182,6 @@ contract Lottery {
         return (addressIndexes[players[playerAddress].index] != playerAddress);
     }
 
-    // NOTE: This should not be used for generating random number in real world
     function generateRandomNumber() private view returns(uint) {
         return uint(sha256(abi.encodePacked(blockhash(0))));
     }

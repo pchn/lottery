@@ -69,15 +69,16 @@ describe("Lottery", function() {
       await expect(status).to.be.reverted
     });
 
-    it('Selects a winner, returns money', async () => {
-      await lottery.activateLottery(1, 1)
-      await lottery.buyWithBNB(2, {value: 2})
+    it('Selects a winner', async () => {
+      await lottery.activateLottery(1000000, 10)
+      await lottery.buyWithBNB(2, {value: 2 * 1000000})
       await lottery.declareWinner()
-      let balance1 = await owner.getBalance()
+      let winners = await lottery.getWinners();
+      console.log("Winner: ", winners[0])
+      console.log("Owner: ", await(owner.getAddress()))
+      expect(winners[0], await(owner.getAddress())).to.be.equal
       await lottery.claimPrize(await(owner.getAddress()))
-      expect(await owner.getBalance() > balance1).to.be.true
       const status = await lottery.isLive()
       await expect(status).to.be.false
     })
-
   })
